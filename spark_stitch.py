@@ -14,6 +14,7 @@ def stitch_spark(point):
     imgs = [cv2.imdecode(arr, 1) for arr in arrs]
 
     # Stitch
+    # TODO: support stitching >2 sources
     simg = stitch.ImageStitcher().blending(imgs[0], imgs[1])
     simgb = cv2.imencode('.jpg', simg)[1]
 
@@ -35,13 +36,14 @@ if __name__ == "__main__":
     # Read all input
     source1 = sc.binaryFiles("file:///home/vostro/cs219/images1")  # first source
     source2 = sc.binaryFiles("file:///home/vostro/cs219/images2")  # second source
+    sources = [source1, source2]  # array of RDDs of all sources
 
     # Get frame-data mapping for all sources
-    source1 = source1.map(get_frame)
-    source2 = source2.map(get_frame)
+    sources = [s.map(get_frame) for s in sources]
 
     # Join all sources into single RDD
-    sources = source1.join(source2)
+    # TODO: find a more generic way for this that works for >2
+    sources = sources[0].join(sources[1])
 
     # Stitch!
     stitched = sources.map(stitch_spark)
