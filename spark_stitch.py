@@ -31,7 +31,6 @@ def get_frame(point):
 
 if __name__ == "__main__":
     sc = SparkContext(appName="stitcher")
-    sc = SparkContext.getOrCreate()
 
     # Read all input
     source1 = sc.binaryFiles("file:///home/vostro/cs219/images1")  # first source
